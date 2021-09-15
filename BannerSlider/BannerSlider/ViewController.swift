@@ -8,8 +8,11 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+    
     @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var pageControl: UIPageControl!
+    
+    var currentPageIndex = 0
     
     let images = [
         UIImage(named: "1"),
@@ -30,34 +33,40 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        pageControl.numberOfPages = images.count
     }
-
-
+    
+    
 }
 
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-            return images.count
-        }
+        return images.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-            
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SliderCell", for: indexPath) as! SliderCell
-            
-            if indexPath.item == images.count {
-                
-            }
-            cell.image = images[indexPath.item]
-            cell.title = titles[indexPath.item]
-            
-            return cell
-        }
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SliderCell", for: indexPath) as! SliderCell
         
-        func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        if indexPath.item == images.count {
             
-            return CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
         }
+        cell.image = images[indexPath.item]
+        cell.title = titles[indexPath.item]
+        
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        return CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        currentPageIndex = Int(scrollView.contentOffset.x / collectionView.frame.size.width)
+        pageControl.currentPage = currentPageIndex
+    }
     
     
 }
