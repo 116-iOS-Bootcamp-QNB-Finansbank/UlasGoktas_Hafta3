@@ -50,19 +50,27 @@ class ViewController: UIViewController {
     func moveToNextIndex() {
         
         currentPageIndex += 1
-        let indexPathCondition = currentPageIndex >= 0 ? currentPageIndex % 5 : (5 - abs(currentPageIndex % 5)) % 5
         
-        print("next", currentPageIndex)
-        collectionView.scrollToItem(at: IndexPath(item: indexPathCondition, section: 0), at: .centeredHorizontally, animated: true)
+        collectionView.scrollToItem(at: IndexPath(item: calculateIndexPath(with: currentPageIndex), section: 0), at: .centeredHorizontally, animated: true)
     }
     
     func moveToPreviousIndex() {
         
         currentPageIndex -= 1
-        let indexPathCondition = currentPageIndex >= 0 ? currentPageIndex % 5 : (5 - abs(currentPageIndex % 5)) % 5
         
-        print("previous", currentPageIndex)
-        collectionView.scrollToItem(at: IndexPath(item: indexPathCondition, section: 0), at: .centeredHorizontally, animated: true)
+        collectionView.scrollToItem(at: IndexPath(item: calculateIndexPath(with: currentPageIndex), section: 0), at: .centeredHorizontally, animated: true)
+    }
+    
+    func calculateIndexPath(with currentPageIndex: Int) -> Int {
+        let indexPath: Int
+        
+        if currentPageIndex >= 0 {
+            indexPath = currentPageIndex % 5
+            return indexPath
+        } else {
+            indexPath = (5 - abs(currentPageIndex % 5)) % 5
+            return indexPath
+        }
     }
     
 }
@@ -89,8 +97,9 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-      let indexPathCondition = currentPageIndex >= 0 ? currentPageIndex % 5 : (5 - abs(currentPageIndex % 5)) % 5
-        pageControl.currentPage = indexPathCondition
+        
+        pageControl.currentPage = calculateIndexPath(with: currentPageIndex)
+        
     }
     
 }
