@@ -17,7 +17,7 @@ class SliderCell: UICollectionViewCell {
             imageView.image = image
         }
     }
-    
+
     var title: String = "" {
         didSet {
             titleLabel.text = title

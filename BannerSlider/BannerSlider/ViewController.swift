@@ -14,6 +14,7 @@ class ViewController: UIViewController {
     
     var currentPageIndex = 0
     
+    
     let images = [
         UIImage(named: "1"),
         UIImage(named: "2"),
@@ -37,6 +38,33 @@ class ViewController: UIViewController {
     }
     
     
+    @IBAction func rightButtonTapped(_ sender: UIButton) {
+        moveToNextIndex()
+    }
+    
+    
+    @IBAction func leftButtonTapped(_ sender: UIButton) {
+        moveToPreviousIndex()
+    }
+    
+    func moveToNextIndex() {
+        
+        currentPageIndex += 1
+        let indexPathCondition = currentPageIndex >= 0 ? currentPageIndex % 5 : (5 - abs(currentPageIndex % 5)) % 5
+        
+        print("next", currentPageIndex)
+        collectionView.scrollToItem(at: IndexPath(item: indexPathCondition, section: 0), at: .centeredHorizontally, animated: true)
+    }
+    
+    func moveToPreviousIndex() {
+        
+        currentPageIndex -= 1
+        let indexPathCondition = currentPageIndex >= 0 ? currentPageIndex % 5 : (5 - abs(currentPageIndex % 5)) % 5
+        
+        print("previous", currentPageIndex)
+        collectionView.scrollToItem(at: IndexPath(item: indexPathCondition, section: 0), at: .centeredHorizontally, animated: true)
+    }
+    
 }
 
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -49,11 +77,8 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SliderCell", for: indexPath) as! SliderCell
         
-        if indexPath.item == images.count {
-            
-        }
-        cell.image = images[indexPath.item]
-        cell.title = titles[indexPath.item]
+        cell.image = images[indexPath.row]
+        cell.title = titles[indexPath.row]
         
         return cell
     }
@@ -64,9 +89,8 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        currentPageIndex = Int(scrollView.contentOffset.x / collectionView.frame.size.width)
-        pageControl.currentPage = currentPageIndex
+      let indexPathCondition = currentPageIndex >= 0 ? currentPageIndex % 5 : (5 - abs(currentPageIndex % 5)) % 5
+        pageControl.currentPage = indexPathCondition
     }
-    
     
 }

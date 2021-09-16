@@ -13,13 +13,17 @@ class ViewController: UIViewController {
     
     var firstNumber = 0.0
     var sum = 0
-    //this variable is optional because when tapped AC button operation will be nil.
-    var currentOperation: Operation?
     
-    //enum for math operations
-    enum Operation {
-        case add, subtract, multiply, divide, squareroot
-    }
+    var operationManager = MathOperationManager()
+//    //this variable is optional because when tapped AC button operation will be nil.
+//    var currentOperation: Operation?
+//
+//    //enum for math operations
+//    enum Operation {
+//        case add, subtract, multiply, divide, squareroot
+//    }
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,38 +50,23 @@ class ViewController: UIViewController {
     
     
     @IBAction func actionButtonTapped(_ sender: UIButton) {
-        //        let value = Double(resultLabel.text ?? "")
-        //        resultLabel.text = String(sqrt(value!))
         
-        let operation = sender.currentTitle
+        let operationString = sender.currentTitle!
         
         if let text = resultLabel.text, let value = Double(text), firstNumber == 0 {
             firstNumber = value
             resultLabel.text = "0"
         }
         
-        switch operation {
-        case "√":
-            currentOperation = .squareroot
-        case "/":
-            currentOperation = .divide
-        case "x":
-            currentOperation = .multiply
-        case "-":
-            currentOperation = .subtract
-        case "+":
-            currentOperation = .add
-        default:
-            currentOperation = nil
-        }
+        let mathOperation = operationManager.getMathOperation(with: operationString)
         
-        if let operation = currentOperation {
+        if let currentOperation = mathOperation {
             var secondNumber = 0.0
             if let text = resultLabel.text, let value = Double(text) {
                 secondNumber = value
             }
             
-            switch operation {
+            switch currentOperation {
             case .add:
                 let result = firstNumber + secondNumber
                 resultLabel.text = "\(result)"
