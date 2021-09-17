@@ -11,36 +11,25 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var resultLabel: UILabel!
     
-    var firstNumber = 0.0
-    var sum = 0
-    
-    var operationManager = MathOperationManager()
-//    //this variable is optional because when tapped AC button operation will be nil.
-//    var currentOperation: Operation?
-//
-//    //enum for math operations
-//    enum Operation {
-//        case add, subtract, multiply, divide, squareroot
-//    }
-    
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        resultLabel.text = "0"
     }
     
     private var isTyping: Bool = false
+    private var firstNumber: Double = 0
+    private var secondNumber: Double = 0
+    
+    private var operationManager = MathOperationManager()
     
     @IBAction func digitButtonTapped(_ sender: UIButton) {
         
-        let digit = sender.currentTitle
+        let digit = sender.currentTitle ?? ""
         let displayText = resultLabel.text ?? ""
         
         
         if isTyping {
-            resultLabel.text = displayText + digit!
+            resultLabel.text = displayText + digit
         } else {
             resultLabel.text = digit
             isTyping.toggle()
@@ -55,47 +44,29 @@ class ViewController: UIViewController {
         
         if let text = resultLabel.text, let value = Double(text), firstNumber == 0 {
             firstNumber = value
-            resultLabel.text = "0"
         }
         
-        let mathOperation = operationManager.getMathOperation(with: operationString)
+        operationManager.selectMathOperation(with: operationString)
         
-        if let currentOperation = mathOperation {
-            var secondNumber = 0.0
-            if let text = resultLabel.text, let value = Double(text) {
-                secondNumber = value
-            }
-            
-            switch currentOperation {
-            case .add:
-                let result = firstNumber + secondNumber
-                resultLabel.text = "\(result)"
-                
-            case .subtract:
-                let result = firstNumber - secondNumber
-                resultLabel.text = "\(result)"
-                
-            case .multiply:
-                let result = firstNumber * secondNumber
-                resultLabel.text = "\(result)"
-                
-            case .divide:
-                let result = firstNumber / secondNumber
-                resultLabel.text = "\(result)"
-                
-            case .squareroot:
-                let result = sqrt(firstNumber)
-                resultLabel.text = "\(result)"
-            }
+        //Square root operation does not require 2 number input so I put this if block for calculate square root after take first number input.
+        if operationManager.currentOperation == .squareroot {
+            let result = String(format: "%.2f", operationManager.calculateResult(firstNumber))
+            resultLabel.text = result
+            firstNumber = 0
+        } else {
+            resultLabel.text = ""
         }
+        
         
         
     }
     
     @IBAction func clearButtonTapped(_ sender: UIButton) {
         resultLabel.text = "0"
-        currentOperation = nil
+        isTyping = false
+        operationManager.currentOperation = nil
         firstNumber = 0
+        secondNumber = 0
     }
     
     @IBAction func zeroButtonTapped(_ sender: UIButton) {
@@ -105,5 +76,31 @@ class ViewController: UIViewController {
             }
         }
     }
+    
+    @IBAction func equalButtonTapped(_ sender: UIButton) {
+        
+        if let text = resultLabel.text, let value = Double(text), secondNumber == 0 {
+            secondNumber = value
+        }
+        
+        let result = operationManager.calculateResult(firstNumber, secondNumber)
+        
+        //To check if the result is double or integer
+        let isInteger: Bool = (result == floor(result))
+        
+        //I decide how many digits to display after the comma, depending on whether the result is a double or an integer.
+        if isInteger {
+            let formattedResult = String(format: "%.0f", result)
+            resultLabel.text = formattedResult
+        } else {
+            let formattedResult = String(format: "%.1f", result)
+            resultLabel.text = formattedResult
+        }
+        
+        isTyping.toggle()
+        firstNumber = 0
+        secondNumber = 0
+    }
+    
 }
 
